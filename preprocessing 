@@ -1,0 +1,21 @@
+from PIL import Image
+import numpy as np
+import torch
+from torchvision import transformers
+
+# 1. Open image and ensure it is in RGB format
+img = Image.open(file_path).convert('RGB')
+
+# 2. Define the preprocessing pipeline
+# Note: Resize is typically 224 for models like ResNet; ToTensor handles HWC -> CHW and float conversion.
+preprocessing = transformers.Compose([
+    transformers.Resize((224, 224)),
+    transformers.ToTensor(),
+    transformers.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+])
+
+# 3. Apply the pipeline to the image
+input_tensor = preprocessing(img)
+
+# 4. Add a batch dimension (B, C, H, W) so it's ready for a model
+input_batch = input_tensor.unsqueeze(0)
